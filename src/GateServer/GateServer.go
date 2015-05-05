@@ -1,7 +1,7 @@
-package main
+package GateServer
 
 import (
-	"./NetLib"
+	"NetSession"
 	"fmt"
 	"net"
 	"os"
@@ -17,6 +17,9 @@ const (
 	Port = 8092
 )
 
+/*
+Server status
+*/
 const (
 	Closed = iota
 	Starting
@@ -24,11 +27,9 @@ const (
 	Closing
 )
 
-type StartStoper interface {
-	Start()
-	Stop()
-}
-
+/*
+Gate server define
+*/
 type Server struct {
 	Version        string
 	SessionManager *NetSession.SessionManager
@@ -37,7 +38,9 @@ type Server struct {
 	closeChan      chan bool
 }
 
-//start server
+/*
+start server
+*/
 func (server *Server) Start() {
 	if server.State != Closed {
 		fmt.Printf("Close server failed,the state of server is %d", server.State)
@@ -73,7 +76,9 @@ func (server *Server) Start() {
 	})
 }
 
-//stop server
+/*
+stop server
+*/
 func (server *Server) Stop() {
 	if server.State != Running {
 		fmt.Printf("Stop server failed,the state of server is %d", server.State)
@@ -87,7 +92,9 @@ func (server *Server) Stop() {
 	server.State = Closed
 }
 
-//get singleinstance server
+/*
+get singleinstance server
+*/
 func GetServer() *Server {
 	if _instance == nil {
 		_instance = &Server{
@@ -99,7 +106,9 @@ func GetServer() *Server {
 	}
 	return _instance
 }
-
+func (server *Server) GetAllServerSession() []*NetSession.NetSession {
+	return server.SessionManager.GetAllSessions()
+}
 func (server *Server) String() {
 	fmt.Println("Server:", server.Version, server.SessionManager)
 }

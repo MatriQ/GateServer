@@ -34,6 +34,9 @@ func (session *NetSession) String() string {
 		",LastMsgTime:" + session.LastMsgTime.Format("2006-01-02 15:04:05")
 }
 
+/*
+read buff from conn
+*/
 func (session *NetSession) connectionHandle() {
 	conn := session.Conn
 	for {
@@ -58,9 +61,17 @@ func (session *NetSession) connectionHandle() {
 		}
 	}
 }
+
+/*
+Remove this session from Manager
+*/
 func (session *NetSession) RemveFromManager() {
 	session.manager.RemoveSession(session.ID)
 }
+
+/*
+Send message(string) to session
+*/
 func (session *NetSession) SendMsg(msg string) {
 	msgBuff := []byte(msg)
 	//msglen := len(msgBuff)
@@ -80,13 +91,19 @@ type SessionManager struct {
 }
 
 func NewSessionManager() *SessionManager {
-	manager := &SessionManager{make([]int, SESSION_MAX), make(map[int]*NetSession)}
+	manager := &SessionManager{
+		make([]int, 10, SESSION_MAX),
+		make(map[int]*NetSession),
+	}
 	for i := 0; i < SESSION_MAX; i++ {
 		manager.freeIDs[i] = 100000 + i
 	}
 	return manager
 }
 
+/*
+Use a net.Conn create a session,and add it to sessionmanager
+*/
 func (sessionManager *SessionManager) AddSession(conn *net.Conn) (err error) {
 	locker.Lock()
 	defer locker.Unlock()
@@ -112,21 +129,49 @@ func (sessionManager *SessionManager) AddSession(conn *net.Conn) (err error) {
 	sessionManager.sessions[sessionID] = session
 	return
 }
+
+/*
+Remove session by id from session manager
+*/
 func (manager *SessionManager) RemoveSession(id int) {
 	locker.Lock()
 	defer locker.Unlock()
 	manager.freeIDs = append(manager.freeIDs, id)
 	delete(manager.sessions, id)
 }
+
+/*
+Close all session
+*/
 func (manager *SessionManager) Close() {
 	for _, session := range manager.sessions {
 		session.Conn.Close()
 	}
 	manager.sessions = make(map[int]*NetSession)
 }
+
+/*
+Get count of all session
+*/
 func (manager *SessionManager) GetSessionCount() int {
 	return len(manager.sessions)
 }
+
+/*
+Get all session
+*/
+func (manager *SessionManager) GetAllSessions() []*NetSession {
+	ret := make([]*NetSession, 10, SESSION_MAX)
+	for _, v := range manager.sessions {
+		ret = append(ret, v)
+	}
+	return ret
+}
+
+/*
+Get a session by id
+if not find session id in manager ,return a nil value
+*/
 func (manager *SessionManager) GetSession(id int) *NetSession {
 	if session, ok := manager.sessions[id]; ok {
 		return session
