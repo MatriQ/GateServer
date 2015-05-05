@@ -2,7 +2,11 @@ package main
 
 import (
 	"GateServer"
+	"bufio"
 	"fmt"
+	"os"
+	"regexp"
+	"strconv"
 )
 
 func main() {
@@ -60,6 +64,7 @@ func main() {
 			}
 		case "help":
 			fmt.Println("GateServer Command:\n\tquit:\tquit server\n\tstart:\tstart server\n\tstop:\tstop server\n\tstate:\tshow server infos\n\thelp:\tto get help")
+		case "":
 		default:
 			fmt.Printf("Unknow command:%s\n command help to get help info\n", command)
 		}

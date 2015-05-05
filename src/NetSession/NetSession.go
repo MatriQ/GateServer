@@ -92,11 +92,11 @@ type SessionManager struct {
 
 func NewSessionManager() *SessionManager {
 	manager := &SessionManager{
-		make([]int, 10, SESSION_MAX),
+		make([]int, SESSION_MAX),
 		make(map[int]*NetSession),
 	}
 	for i := 0; i < SESSION_MAX; i++ {
-		manager.freeIDs[i] = 100000 + i
+		manager.freeIDs[i] = 1000 + i
 	}
 	return manager
 }
@@ -112,6 +112,9 @@ func (sessionManager *SessionManager) AddSession(conn *net.Conn) (err error) {
 		return
 	}
 	sessionID := sessionManager.freeIDs[0]
+	if sessionID == 0 {
+		fmt.Println("None new sessionID.", len(sessionManager.freeIDs))
+	}
 	sessionManager.freeIDs = sessionManager.freeIDs[1:]
 	session := &NetSession{
 		ID:          sessionID,
