@@ -1,7 +1,7 @@
 package GateServer
 
 import (
-	"NetSession"
+	"Gate/NetSession"
 	"fmt"
 	"net"
 	"os"

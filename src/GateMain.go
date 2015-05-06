@@ -1,7 +1,7 @@
 package main
 
 import (
-	"GateServer"
+	"Gate/GateServer"
 	"bufio"
 	"fmt"
 	"os"
