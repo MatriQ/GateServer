@@ -11,11 +11,11 @@ type UserManager struct {
 func NewUserManager() *UserManager {
 	return &UserManager{}
 }
-func RegisterUser(session *NetSession, string userName, string userPass) {
+func RegisterUser(session *NetSession, userName string, userPass string) {
 
 }
 
-func UserLogin(session *NetSession, string userName, string userPass) {
+func UserLogin(session *NetSession, userName string, userPass string) {
 
 }
 
