@@ -2,6 +2,7 @@ package Gate
 
 import (
 	"Gate/NetSession"
+	"reflect"
 )
 
 type Messager interface {
@@ -14,26 +15,37 @@ type Hander interface {
 }
 
 type MessageManager struct {
-	Handers  [int]interface{}
-	Messages [int]interface{}
+	Handers  map[int]reflect.Type
+	Messages map[int]reflect.Type
 }
 
 func NewMessagePool() {
-	var ret = &MessageManager{}
+	var ret = &MessageManager{
+		Handers:   make(map[int]reflect.Type),
+		Messagers: make(map[int]reflect.Type),
+	}
 	return ret
 }
 
-func (manager *MessageManager) register(id int, handler *Hander, message *Messager) {
-	manager.Handers[id] = handler
-	manager.Messages[id] = message
+func (manager *MessageManager) register(id int, handlerType reflect.Type, messageType reflect.Type) {
+	manager.Handers[id] = handlerType
+	manager.Messages[id] = messageType
 }
 
 func (manager *MessageManager) CreateHandler(id int) *Hander {
-	var ret = &Hander{}
+	var t = manager.Handers[id]
+	if t == nil {
+		//error
+	}
+
+	var ret = &reflect.New(t)
 	return ret
 }
 
 func (manager *MessageManager) CreateMessage(id int) *Messager {
-	var ret = &Messager{}
-	return ret
+	var t = manager.Handers[id]
+	if t == nil {
+		//error
+	}
+	return &reflect.New(t)
 }
