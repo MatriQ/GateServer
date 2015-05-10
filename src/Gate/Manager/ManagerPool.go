@@ -1,4 +1,4 @@
-package manager
+package Manager
 
 import (
 	"User"
@@ -20,7 +20,7 @@ func GetInstance() *ManagerPool {
 		if instance == nil {
 			instance = &ManagerPool{
 				ServerManager: nil,
-				UserManager:   user.NewUserNamager(),
+				UserManager:   User.NewUserNamager(),
 			}
 		}
 		locker.Unlock()
